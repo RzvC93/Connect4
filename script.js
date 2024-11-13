@@ -51,17 +51,81 @@ function changePlayer() {
 
 function checkWinner() {
 	const gridCell = document.querySelectorAll(".cssCell");
-	for (let i = maxRow; i > 0; --i) {
-		for (let j = 0; j < maxCol - 3; ++j) {
-			const currentIndex = (i - 1) * maxCol + j;
+
+	for (let i = maxRow - 1; i >= 0; --i) {
+		for (let j = 0; j < maxCol; ++j) {
+			const currentIndex = i * maxCol + j;
+
+			// Horizontal check
 			if (
+				j <= maxCol - 4 &&
 				gridCell[currentIndex].classList.contains(currentPlayer) &&
 				gridCell[currentIndex + 1].classList.contains(currentPlayer) &&
 				gridCell[currentIndex + 2].classList.contains(currentPlayer) &&
 				gridCell[currentIndex + 3].classList.contains(currentPlayer)
 			) {
-				message.textContent = `Winner on horizontal! The player with color ${currentPlayer} wins.`;
+				message.textContent = `Winner on horizontal! The player ${currentPlayer} wins.`;
 				gameOver = true;
+				return;
+			}
+
+			// Vertical check
+			if (
+				i >= 3 &&
+				gridCell[currentIndex].classList.contains(currentPlayer) &&
+				gridCell[currentIndex - maxCol].classList.contains(
+					currentPlayer
+				) &&
+				gridCell[currentIndex - 2 * maxCol].classList.contains(
+					currentPlayer
+				) &&
+				gridCell[currentIndex - 3 * maxCol].classList.contains(
+					currentPlayer
+				)
+			) {
+				message.textContent = `Winner on vertical! The player ${currentPlayer} wins.`;
+				gameOver = true;
+				return;
+			}
+
+			// Diagonal check (from bottom left to top right)
+			if (
+				i >= 3 &&
+				j <= maxCol - 4 &&
+				gridCell[currentIndex].classList.contains(currentPlayer) &&
+				gridCell[(i - 1) * maxCol + (j + 1)].classList.contains(
+					currentPlayer
+				) &&
+				gridCell[(i - 2) * maxCol + (j + 2)].classList.contains(
+					currentPlayer
+				) &&
+				gridCell[(i - 3) * maxCol + (j + 3)].classList.contains(
+					currentPlayer
+				)
+			) {
+				message.textContent = `Winner on diagonal! The player ${currentPlayer} wins.`;
+				gameOver = true;
+				return;
+			}
+
+			// Diagonal check (from bottom right to top left)
+			if (
+				i >= 3 &&
+				j >= 3 &&
+				gridCell[currentIndex].classList.contains(currentPlayer) &&
+				gridCell[(i - 1) * maxCol + (j - 1)].classList.contains(
+					currentPlayer
+				) &&
+				gridCell[(i - 2) * maxCol + (j - 2)].classList.contains(
+					currentPlayer
+				) &&
+				gridCell[(i - 3) * maxCol + (j - 3)].classList.contains(
+					currentPlayer
+				)
+			) {
+				message.textContent = `Winner on diagonal! The player ${currentPlayer} wins.`;
+				gameOver = true;
+				return;
 			}
 		}
 	}
