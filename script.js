@@ -37,6 +37,14 @@ function handleCellClick() {
 			const row = parseInt(cell.dataset.row);
 			const col = parseInt(cell.dataset.col);
 
+			if (board[row][col] !== null) {
+				message.textContent = "This cell is already colored!";
+				setTimeout(() => {
+					message.textContent = "";
+				}, MESSAGE_TIMEOUT);
+				return; // Exit if the cell is already filled
+			}
+
 			if (isValidMove(row, col)) {
 				board[row][col] = currentPlayer;
 				cell.classList.add(currentPlayer);
