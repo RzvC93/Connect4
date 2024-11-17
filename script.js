@@ -6,9 +6,9 @@ const MESSAGE_TIMEOUT = 2000;
 const message = document.getElementById("message");
 
 let board = [];
-for (let i = 0; i < maxRow; i++) {
+for (let i = 0; i < maxRow; ++i) {
 	board[i] = [];
-	for (let j = 0; j < maxCol; j++) {
+	for (let j = 0; j < maxCol; ++j) {
 		board[i][j] = null;
 	}
 }
@@ -33,7 +33,6 @@ function handleCellClick() {
 		cell.addEventListener("click", () => {
 			if (gameOver) return;
 
-			// convert to INT
 			const row = parseInt(cell.dataset.row);
 			const col = parseInt(cell.dataset.col);
 
@@ -42,7 +41,7 @@ function handleCellClick() {
 				setTimeout(() => {
 					message.textContent = "";
 				}, MESSAGE_TIMEOUT);
-				return; // Exit if the cell is already filled
+				return;
 			}
 
 			if (isValidMove(row, col)) {
