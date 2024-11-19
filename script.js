@@ -48,6 +48,13 @@ function handleCellClick() {
 				board[row][col] = currentPlayer;
 				cell.classList.add(currentPlayer);
 				checkWinner();
+
+				if (!gameOver && checkDraw()) {
+					message.textContent = "It's a draw! Nobody wins.";
+					gameOver = true;
+					return;
+				}
+
 				changePlayer();
 			} else {
 				message.textContent = "Not allowed yet!";
@@ -64,89 +71,62 @@ function isValidMove(row, col) {
 	return row === maxRow - 1 || board[row + 1][col] !== null;
 }
 
+function checkWinner() {
+	for (let i = 0; i < maxRow; i++) {
+		for (let j = 0; j < maxCol; j++) {
+			if (
+				checkDirection(i, j, 0, 1) || // Horizontal
+				checkDirection(i, j, 1, 0) || // Vertical
+				checkDirection(i, j, 1, 1) || // Diagonal
+				checkDirection(i, j, -1, 1) // Diagonal
+			) {
+				message.textContent = `Winner! The player ${currentPlayer} wins.`;
+				gameOver = true;
+				return;
+			}
+		}
+	}
+}
+
+function checkDirection(startRow, startCol, rowIncrement, colIncrement) {
+	let count = 0;
+
+	for (let k = 0; k < 4; k++) {
+		const newRow = startRow + k * rowIncrement;
+		const newCol = startCol + k * colIncrement;
+
+		if (
+			newRow >= 0 &&
+			newRow < maxRow &&
+			newCol >= 0 &&
+			newCol < maxCol &&
+			board[newRow][newCol] === currentPlayer
+		) {
+			++count;
+		} else {
+			break;
+		}
+	}
+
+	return count === 4;
+}
+
+function checkDraw() {
+	for (let i = 0; i < maxRow; i++) {
+		for (let j = 0; j < maxCol; j++) {
+			if (board[i][j] === null) {
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
 function changePlayer() {
 	if (currentPlayer === "red") {
 		currentPlayer = "yellow";
 	} else {
 		currentPlayer = "red";
-	}
-}
-
-function checkWinner() {
-	const gridCell = document.querySelectorAll(".cssCell");
-
-	for (let i = maxRow - 1; i >= 0; --i) {
-		for (let j = 0; j < maxCol; ++j) {
-			const currentIndex = i * maxCol + j;
-
-			if (
-				j <= maxCol - 4 &&
-				gridCell[currentIndex].classList.contains(currentPlayer) &&
-				gridCell[currentIndex + 1].classList.contains(currentPlayer) &&
-				gridCell[currentIndex + 2].classList.contains(currentPlayer) &&
-				gridCell[currentIndex + 3].classList.contains(currentPlayer)
-			) {
-				message.textContent = `Winner on horizontal! The player ${currentPlayer} wins.`;
-				gameOver = true;
-				return;
-			}
-
-			if (
-				i >= 3 &&
-				gridCell[currentIndex].classList.contains(currentPlayer) &&
-				gridCell[currentIndex - maxCol].classList.contains(
-					currentPlayer
-				) &&
-				gridCell[currentIndex - 2 * maxCol].classList.contains(
-					currentPlayer
-				) &&
-				gridCell[currentIndex - 3 * maxCol].classList.contains(
-					currentPlayer
-				)
-			) {
-				message.textContent = `Winner on vertical! The player ${currentPlayer} wins.`;
-				gameOver = true;
-				return;
-			}
-
-			if (
-				i >= 3 &&
-				j <= maxCol - 4 &&
-				gridCell[currentIndex].classList.contains(currentPlayer) &&
-				gridCell[(i - 1) * maxCol + (j + 1)].classList.contains(
-					currentPlayer
-				) &&
-				gridCell[(i - 2) * maxCol + (j + 2)].classList.contains(
-					currentPlayer
-				) &&
-				gridCell[(i - 3) * maxCol + (j + 3)].classList.contains(
-					currentPlayer
-				)
-			) {
-				message.textContent = `Winner on diagonal! The player ${currentPlayer} wins.`;
-				gameOver = true;
-				return;
-			}
-
-			if (
-				i >= 3 &&
-				j >= 3 &&
-				gridCell[currentIndex].classList.contains(currentPlayer) &&
-				gridCell[(i - 1) * maxCol + (j - 1)].classList.contains(
-					currentPlayer
-				) &&
-				gridCell[(i - 2) * maxCol + (j - 2)].classList.contains(
-					currentPlayer
-				) &&
-				gridCell[(i - 3) * maxCol + (j - 3)].classList.contains(
-					currentPlayer
-				)
-			) {
-				message.textContent = `Winner on diagonal! The player ${currentPlayer} wins.`;
-				gameOver = true;
-				return;
-			}
-		}
 	}
 }
 
