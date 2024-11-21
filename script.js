@@ -4,13 +4,17 @@ const maxCol = 7;
 let gameOver = false;
 const MESSAGE_TIMEOUT = 2000;
 const message = document.getElementById("message");
+let board = initializeBoard();
 
-let board = [];
-for (let i = 0; i < maxRow; ++i) {
-	board[i] = [];
-	for (let j = 0; j < maxCol; ++j) {
-		board[i][j] = null;
+function initializeBoard() {
+	let board = [];
+	for (let i = 0; i < maxRow; ++i) {
+		board[i] = [];
+		for (let j = 0; j < maxCol; ++j) {
+			board[i][j] = null;
+		}
 	}
+	return board;
 }
 
 function createBoard() {
@@ -19,13 +23,22 @@ function createBoard() {
 		for (let j = 0; j < maxCol; ++j) {
 			const spanForCell = document.createElement("span");
 			spanForCell.classList.add("cssCell");
-			spanForCell.dataset.row = i;
 			spanForCell.dataset.col = j;
+			spanForCell.id = `cell-${i}-${j}`;
 			gameBoard.appendChild(spanForCell);
 		}
 	}
 }
 createBoard();
+
+function findValidRow(col) {
+	for (let row = maxRow - 1; row >= 0; row--) {
+		if (board[row][col] === null) {
+			return row;
+		}
+	}
+	return -1;
+}
 
 function handleCellClick() {
 	const gridCell = document.querySelectorAll(".cssCell");
@@ -33,43 +46,36 @@ function handleCellClick() {
 		cell.addEventListener("click", () => {
 			if (gameOver) return;
 
-			const row = parseInt(cell.dataset.row);
 			const col = parseInt(cell.dataset.col);
+			const validRow = findValidRow(col);
 
-			if (board[row][col] !== null) {
-				message.textContent = "This cell is already colored!";
+			if (validRow === -1) {
+				message.textContent = "This column is full";
 				setTimeout(() => {
 					message.textContent = "";
 				}, MESSAGE_TIMEOUT);
 				return;
 			}
 
-			if (isValidMove(row, col)) {
-				board[row][col] = currentPlayer;
-				cell.classList.add(currentPlayer);
-				checkWinner();
+			board[validRow][col] = currentPlayer;
+			const targetCell = document.getElementById(
+				`cell-${validRow}-${col}`
+			);
+			targetCell.classList.add(currentPlayer);
 
-				if (!gameOver && checkDraw()) {
-					message.textContent = "It's a draw! Nobody wins.";
-					gameOver = true;
-					return;
-				}
+			checkWinner();
 
-				changePlayer();
-			} else {
-				message.textContent = "Not allowed yet!";
-				setTimeout(() => {
-					message.textContent = "";
-				}, MESSAGE_TIMEOUT);
+			if (!gameOver && checkDraw()) {
+				message.textContent = "It's a draw! Nobody wins.";
+				gameOver = true;
+				return;
 			}
+
+			changePlayer();
 		});
 	});
 }
 handleCellClick();
-
-function isValidMove(row, col) {
-	return row === maxRow - 1 || board[row + 1][col] !== null;
-}
 
 function checkWinner() {
 	for (let i = 0; i < maxRow; i++) {
@@ -107,7 +113,6 @@ function checkDirection(startRow, startCol, rowIncrement, colIncrement) {
 			break;
 		}
 	}
-
 	return count === 4;
 }
 
@@ -131,11 +136,7 @@ function changePlayer() {
 }
 
 function resetGame() {
-	for (let i = 0; i < maxRow; i++) {
-		for (let j = 0; j < maxCol; j++) {
-			board[i][j] = null;
-		}
-	}
+	board = initializeBoard();
 
 	const gridCell = document.querySelectorAll(".cssCell");
 	gridCell.forEach((cell) => {
