@@ -32,7 +32,7 @@ function createBoard() {
 createBoard();
 
 function findValidRow(col) {
-	for (let row = maxRow - 1; row >= 0; row--) {
+	for (let row = maxRow - 1; row >= 0; --row) {
 		if (board[row][col] === null) {
 			return row;
 		}
@@ -78,8 +78,8 @@ function handleCellClick() {
 handleCellClick();
 
 function checkWinner() {
-	for (let i = 0; i < maxRow; i++) {
-		for (let j = 0; j < maxCol; j++) {
+	for (let i = 0; i < maxRow; ++i) {
+		for (let j = 0; j < maxCol; ++j) {
 			if (
 				checkDirection(i, j, 0, 1) || // Horizontal
 				checkDirection(i, j, 1, 0) || // Vertical
@@ -97,7 +97,7 @@ function checkWinner() {
 function checkDirection(startRow, startCol, rowIncrement, colIncrement) {
 	let count = 0;
 
-	for (let k = 0; k < 4; k++) {
+	for (let k = 0; k < 4; ++k) {
 		const newRow = startRow + k * rowIncrement;
 		const newCol = startCol + k * colIncrement;
 
@@ -117,8 +117,8 @@ function checkDirection(startRow, startCol, rowIncrement, colIncrement) {
 }
 
 function checkDraw() {
-	for (let i = 0; i < maxRow; i++) {
-		for (let j = 0; j < maxCol; j++) {
+	for (let i = 0; i < maxRow; ++i) {
+		for (let j = 0; j < maxCol; ++j) {
 			if (board[i][j] === null) {
 				return false;
 			}
